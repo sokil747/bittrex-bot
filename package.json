@@ -1,0 +1,19 @@
+{
+  "name": "bittrex-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bittrex_bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sokil747/bittrex-bot.git"
+  },
+  "author": "stranger27",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sokil747/bittrex-bot/issues"
+  },
+  "homepage": "https://github.com/sokil747/bittrex-bot#readme"
+}
