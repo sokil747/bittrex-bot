@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/sokil747/bittrex-bot/issues"
   },
-  "homepage": "https://github.com/sokil747/bittrex-bot#readme"
+  "homepage": "https://github.com/sokil747/bittrex-bot#readme",
+  "dependencies": {
+    "console-stamp": "^0.2.6",
+    "node-bittrex-api": "^0.7.6"
+  }
 }

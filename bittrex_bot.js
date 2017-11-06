@@ -1,18 +1,17 @@
 require('console-stamp')(console, '[HH:MM:ss.l]');
-var screenshot = require('url-to-screenshot');
-var fs = require('fs');
+var settings =require('./settings.js') // edit settings.sample.js for your needs
+var url = "https://bittrex.com/Market/Index?MarketName=" + settings.market ;
 
-var bittrex = require('./node_modules/node.bittrex.api/node.bittrex.api.js');
+var bittrex = require('node-bittrex-api');
 bittrex.options({
-    'apikey' : 'Your_api_key' ,
-    'apisecret' : 'Your_api_secret', 
+    'apikey' : settings.bittrex_apikey ,
+    'apisecret' : settings.bittrex_apisecret, 
     'stream' : true,
     'verbose' : true,
     'cleartext' : false 
  });
-var market = 'USDT-ETH';
-var url = "https://bittrex.com/Market/Index?MarketName=" + market ;
-var interval = 5000;
+
+var interval = settings.timeframe * 60 * 1000;
 
 
 //var talib = require('./node_modules/talib/build/Release/talib');
@@ -43,35 +42,25 @@ var interval = 5000;
 
 
 
-
-//screenshot(url)
-//  .width(800)
-//  .height(600)
-//  .capture(function(err, img) {
-//    if (err) throw err;
-//    fs.writeFileSync(__dirname + '/example.png', img);
-//    console.log('open example.png');
-//  });
-
 console.log ('I am profit_bot and i am going to make you rich!');
 
 
 
-function trade() {
+function start(timeout) {
 setTimeout(function () {
 // check prices	 
 
-bittrex.getticker( { market : market }, function( data ) {
+bittrex.getticker( { market : settings.market }, function( data ) {
     console.log ('Bid = ' + data.result.Bid  + ' Ask = ' + data.result.Ask + ' Last = ' + data.result.Last);
  //	console.log( data );
 });
 	
-bittrex.getmarketsummary( { market : market}, function( data ) {
+bittrex.getmarketsummary( { market : settings.market}, function( data ) {
     console.log( data );
 });	
 	
 
-//bittrex.getopenorders( { market : market}, function( data ) {
+//bittrex.getopenorders( { market : settings.market}, function( data ) {
   //  console.log(data);
 //	if (data.result.length > 0) {
 	//  console.log('Активные ордера:');
@@ -80,12 +69,12 @@ bittrex.getmarketsummary( { market : market}, function( data ) {
 	
 // });
 
-//trade();
-}, interval);
+start(interval);
+}, timeout);
 // open orders
 }
 // Start !
-trade();
+start(0);
 
 //console.log ('custom request');
 //bittrex.sendCustomRequest( 'https://bittrex.com/api/v1.1/account/getbalances?currency=BTC', function( data ) {
