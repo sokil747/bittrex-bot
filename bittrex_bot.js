@@ -40,13 +40,34 @@ var interval = settings.timeframe * 60 * 1000;
 //    console.log( data );
 //});
 
+// setting timeout
+var timeout;
+switch (settings.tickInterval) {
+  case 'oneMin':
+    timeout = 1000 * 60
+    break;
+  case 'fiveMin':
+    timeout = 1000 * 60 * 5
+    break;
+  case 'thirtyMin':
+    timeout = 1000 * 60 * 30
+    break;
+   case 'hour':
+    timeout = 1000 * 60 * 60
+    break;
+  case 'day':
+    timeout = 1000 * 60 * 60 * 24
+    break;
+  default:
+    console.log( 'Found error with timeframe interval. Switched to default value.' );
+	timeout = 1000 * 60 * 60
+}
+console.log ('Tickinterval = ' + settings.tickInterval + ' so timeout was set to ' + timeout/1000 + ' sec.')
+console.log ('Ready to make profit!');
 
 
-console.log ('I am profit_bot and i am going to make you rich!');
 
-
-
-function start(timeout) {
+function start(delay) {
 setTimeout(function () {
 // check prices	 
 
@@ -55,10 +76,16 @@ bittrex.getticker( { market : settings.market }, function( data ) {
  //	console.log( data );
 });
 	
-bittrex.getmarketsummary( { market : settings.market}, function( data ) {
-    console.log( data );
-});	
-	
+//bittrex.getmarketsummary( { market : settings.market}, function( data ) {
+//    console.log( data );
+//});	
+
+//bittrex.getcandles({
+//  marketName: settings.market,
+//  tickInterval: settings.tickInterval, // intervals are keywords
+//}, function( data, err ) {
+//  console.log( data );
+//});	
 
 //bittrex.getopenorders( { market : settings.market}, function( data ) {
   //  console.log(data);
@@ -69,12 +96,23 @@ bittrex.getmarketsummary( { market : settings.market}, function( data ) {
 	
 // });
 
-start(interval);
-}, timeout);
-// open orders
+start(sync());
+}, delay);
+
+					
 }
-// Start !
-start(0);
+
+//synchronizing time
+
+function sync() {
+ var d = new Date();
+ var msSinceMidnight = d.getTime() - d.setHours(0,0,0,0); 
+ var towait = (timeout - (msSinceMidnight % timeout)) ;
+// console.log(towait/1000)
+	return towait;
+}
+
+start(sync());
 
 //console.log ('custom request');
 //bittrex.sendCustomRequest( 'https://bittrex.com/api/v1.1/account/getbalances?currency=BTC', function( data ) {
