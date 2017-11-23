@@ -65,16 +65,37 @@ switch (settings.tickInterval) {
 console.log ('Tickinterval = ' + settings.tickInterval + ' so timeout was set to ' + timeout/1000 + ' sec.')
 console.log ('Ready to make profit!');
 
-
+// getting market history
+	
+var candles;
+candles = bittrex.getcandles({
+  marketName: settings.market,
+  tickInterval: settings.tickInterval, // intervals are keywords
+}, function( data, err ) {
+	data.result.splice(0, data.result.length - settings.markethistory )
+	candles = data.result
+	
+ });
 
 function start(delay) {
 setTimeout(function () {
 // check prices	 
 
-bittrex.getticker( { market : settings.market }, function( data ) {
-    console.log ('Bid = ' + data.result.Bid  + ' Ask = ' + data.result.Ask + ' Last = ' + data.result.Last);
+//bittrex.getticker( { market : settings.market }, function( data ) {
+//    console.log ('Bid = ' + data.result.Bid  + ' Ask = ' + data.result.Ask + ' Last = ' + data.result.Last);
  //	console.log( data );
-});
+//});	
+
+// Let's get latest candle and add it to our history and delete first one.	
+var url = 'https://bittrex.com/Api/v2.0/pub/market/GetLatestTick?marketName='+ settings.market +'&tickInterval=' + settings.tickInterval;
+bittrex.sendCustomRequest( url, function( data, err ) {
+  //console.log( data );
+  candles.push(data.result[0])
+  candles.shift();
+});	
+	
+console.log( 'candle length =' + candles.length )
+console.log( candles )	
 	
 //bittrex.getmarketsummary( { market : settings.market}, function( data ) {
 //    console.log( data );
@@ -84,7 +105,7 @@ bittrex.getticker( { market : settings.market }, function( data ) {
 //  marketName: settings.market,
 //  tickInterval: settings.tickInterval, // intervals are keywords
 //}, function( data, err ) {
-//  console.log( data );
+ // console.log( data );
 //});	
 
 //bittrex.getopenorders( { market : settings.market}, function( data ) {
@@ -107,7 +128,7 @@ start(sync());
 function sync() {
  var d = new Date();
  var msSinceMidnight = d.getTime() - d.setHours(0,0,0,0); 
- var towait = (timeout - (msSinceMidnight % timeout)) ;
+ var towait = (timeout - (msSinceMidnight % timeout)) + 5000 ; // 5 sec added to let bittrex refresh data
 // console.log(towait/1000)
 	return towait;
 }
